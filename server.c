@@ -16,6 +16,8 @@ void error(const char *msg)
 
 int main(int argc, char *argv[])
 {
+     char buffer[1024] = {0};
+     char *hello = "Hello "; 
      int sockfd, newsockfd, portno;
      socklen_t clilen;
      char buffer[1024];
@@ -39,11 +41,11 @@ int main(int argc, char *argv[])
               error("ERROR on binding");
      listen(sockfd,5);
      clilen = sizeof(cli_addr);
-     
+     st
        
       while (1) {
        m = read(sockfd,buffer,255);
-       n = write(sockfd,strlen("Hi!"));         //Ask for Number 1     
+       n = write(sockfd,hello,strlen(hello),0);         //Ask for Number 1     
       }
     
      
@@ -53,8 +55,5 @@ int main(int argc, char *argv[])
 
 
 
-/*
-Server side terminal:
-jj@ubuntu:~/Desktop$ gcc Server.c -o Server
-jj@ubuntu:~/Desktop$ ./Server 4562
+
 

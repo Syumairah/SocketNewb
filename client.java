@@ -1,33 +1,41 @@
-import java.io.*;
-import java.net.*;
-import java.util.*;
- 
-class Client {
-    
-    public static void main(String argv[])
-      {
-	    
-        try{
-            String hostName = args[0];
-        int portNumber = Integer.parseInt(args[1]);
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+/**
+ * This class implements java socket client
+ * @author pankaj
+ *
+ */
+public class SocketClientExample {
+
+    public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException, InterruptedException{
+        //get the localhost IP address, if server is running on some other IP, you need to use that
+        InetAddress host = InetAddress.getLocalHost();
+        Socket socket = null;
+        ObjectOutputStream oos = null;
+        ObjectInputStream ois = null;
+        for(int i=0; i<5;i++){
             //establish socket connection to server
-            Socket socketclient = new Socket(hostName, portNumber);
-            PrintWriter out = new PrintWriter(firstSocket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(firstSocket.getInputStream()));
-            BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-            
-        String userInput;
-           writer.write("*** Hi from Client \n"); 
-        while ((userInput = stdIn.readLine()) != null) 
-        {
-            System.out.println("received: " + in.readLine());
+            socket = new Socket(host.getHostName(), 9876);
+            //write to socket using ObjectOutputStream
+            oos = new ObjectOutputStream(socket.getOutputStream());
+            System.out.println("Sending request to Socket Server");
+	    oos.writeObject("Client: Hi ");
+            if(i==4)oos.writeObject("exit");
+            else oos.writeObject(""+i);
+            //read the server response message
+            ois = new ObjectInputStream(socket.getInputStream());
+            String message = (String) ois.readObject();
+	    
+            System.out.println("Server: " + message);
+            //close resources
+            ois.close();
+            oos.close();
+            Thread.sleep(100);
         }
-        in.close();
-        stdIn.close();
-        firstSocket.close();
-            
-           
-        }
-	  }
- 
+    }
 }

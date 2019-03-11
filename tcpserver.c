@@ -13,7 +13,8 @@
 int main(int argc, char *argv[]) {
 	// port to start the server on
 	int SERVER_PORT = 8877;
-
+	int sockfd;
+	sockfd = socket(PF_INET, SOCK_STREAM, 0);
 	// socket address used for the server
 	struct sockaddr_in server_address;
 	memset(&server_address, 0, sizeof(server_address));
@@ -26,12 +27,8 @@ int main(int argc, char *argv[]) {
 	// htonl: host to network long: same as htons but to long
 	server_address.sin_addr.s_addr = htonl(INADDR_ANY);
 
-	// create a TCP socket, creation returns -1 on failure
-	int listen_sock;
-	if ((listen_sock = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
-		printf("could not create listen socket\n");
-		return 1;
-	}
+	
+	
 
 	// bind it to listen to the incoming connections on the created server
 	// address, will return -1 on error
@@ -41,12 +38,10 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	int wait_size = 16;  // maximum number of waiting clients, after which
+	  // maximum number of waiting clients, after which
 	                     // dropping begins
-	if (listen(listen_sock, wait_size) < 0) {
-		printf("could not open socket for listening\n");
-		return 1;
-	}
+	listen(sockfd,5);
+	
 
 	// socket address used to store client address
 	struct sockaddr_in client_address;

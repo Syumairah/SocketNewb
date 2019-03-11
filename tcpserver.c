@@ -1,86 +1,56 @@
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <stdbool.h>
+/* A simple server in the internet domain using TCP
+   The port number is passed as an argument */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h> 
+#include <sys/socket.h>
+#include <netinet/in.h>
 
-/**
- * TCP Uses 2 types of sockets, the connection socket and the listen socket.
- * The Goal is to separate the connection phase from the data exchange phase.
- * */
+void error(const char *msg)
+{
+    perror(msg);
+    exit(1);
+}
 
-int main(int argc, char *argv[]) {
-	// port to start the server on
-	int SERVER_PORT = 8877;
-	int sockfd;
-	sockfd = socket(PF_INET, SOCK_STREAM, 0);
-	// socket address used for the server
-	struct sockaddr_in server_address;
-	memset(&server_address, 0, sizeof(server_address));
-	server_address.sin_family = AF_INET;
-
-	// htons: host to network short: transforms a value in host byte
-	// ordering format to a short value in network byte ordering format
-	server_address.sin_port = htons(SERVER_PORT);
-
-	// htonl: host to network long: same as htons but to long
-	server_address.sin_addr.s_addr = htonl(INADDR_ANY);
-
+int main(int argc, char *argv[])
+{
+     int sockfd, newsockfd, portno;
+     socklen_t clilen;
+     char buffer[256];
+     struct sockaddr_in serv_addr, cli_addr;
+     int n;
+     if (argc < 2) {
+         fprintf(stderr,"ERROR, no port provided\n");
+         exit(1);
+     }
+     sockfd = socket(AF_INET, SOCK_STREAM, 0);
+     if (sockfd < 0) 
+        error("ERROR opening socket");
+     bzero((char *) &serv_addr, sizeof(serv_addr));
+     portno = atoi(argv[1]);
+     serv_addr.sin_family = AF_INET;
+     serv_addr.sin_addr.s_addr = INADDR_ANY;
+     serv_addr.sin_port = htons(portno);
+     if (bind(sockfd, (struct sockaddr *) &serv_addr,
+              sizeof(serv_addr)) < 0) 
+              error("ERROR on binding");
+     listen(sockfd,5);
+     clilen = sizeof(cli_addr);
+     newsockfd = accept(sockfd, 
+                 (struct sockaddr *) &cli_addr, 
+                 &clilen);
+     if (newsockfd < 0) 
+          error("ERROR on accept");
+     bzero(buffer,256);
+     n = read(newsockfd,buffer,255);
+     if (n < 0) error("ERROR reading from socket");
+     printf("Here is the message: %s\n",buffer);
+     n = write(newsockfd,"I got your message",18);
+     if (n < 0) error("ERROR writing to socket");
+     close(newsockfd);
+     close(sockfd);
+     return 0; 
 	
-	
-
-	// bind it to listen to the incoming connections on the created server
-	// address, will return -1 on error
-	if ((bind(listen_sock, (struct sockaddr *)&server_address,
-	          sizeof(server_address))) < 0) {
-		printf("could not bind socket\n");
-		return 1;
-	}
-
-	  // maximum number of waiting clients, after which
-	                     // dropping begins
-	listen(sockfd,5);
-	
-
-	// socket address used to store client address
-	struct sockaddr_in client_address;
-	int client_address_len = 0;
-
-	// run indefinitely
-	while (true) {
-		// open a new socket to transmit data per connection
-		int sock;
-		if ((sock =
-		         accept(listen_sock, (struct sockaddr *)&client_address,
-		                &client_address_len)) < 0) {
-			printf("could not open a socket to accept data\n");
-			return 1;
-		}
-
-		int n = 0;
-		int len = 0, maxlen = 100;
-		char buffer[maxlen];
-		char *pbuffer = buffer;
-
-		printf("client connected with ip address: %s\n",
-		       inet_ntoa(client_address.sin_addr));
-
-		// keep running as long as the client keeps the connection open
-		while ((n = recv(sock, pbuffer, maxlen, 0)) > 0) {
-			pbuffer += n;
-			maxlen -= n;
-			len += n;
-
-			printf("received: '%s'\n", buffer);
-
-			// echo received content back
-			send(sock, buffer, len, 0);
-		}
-
-		close(sock);
-	}
-
-	close(listen_sock);
-	return 0;
 }

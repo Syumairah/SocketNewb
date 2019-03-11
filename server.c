@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
        
       while (1) {
        m = read(sockfd,buffer,255);
-       n = write(sockfd,strlen("Server: Hi!"));         //Ask for Number 1     
+       n = write(sockfd,strlen("Hi!"));         //Ask for Number 1     
       }
     
      

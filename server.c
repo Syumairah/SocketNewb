@@ -37,13 +37,13 @@ int main(int argc, char *argv[])
           error("ERROR on accept");
     while(1)
      {
-           bzero(buffer,256);
+           bzero(buffer,255);
            n = read(newsockfd,buffer,255);
            if (n < 0) error("ERROR reading from socket");
            printf("Client: %s\n",buffer);
-          bzero(buffer,256);
+          bzero(buffer,255);
           fgets(buffer,255,stdin);
-          n = write(strlen("hello from server"));
+          n = write(newsockfd,"Message:",strlen("hello from server"));
            if (n < 0) error("ERROR writing to socket");
            int i=strncmp("Bye" , buffer, 3);
            if(i == 0)

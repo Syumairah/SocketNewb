@@ -39,18 +39,14 @@ int main(int argc, char *argv[])
               error("ERROR on binding");
      listen(sockfd,5);
      clilen = sizeof(cli_addr);
-     newsockfd = accept(sockfd, 
-                 (struct sockaddr *) &cli_addr, 
-                 &clilen);
-     if (newsockfd < 0) 
-          error("ERROR on accept");
+     
        
       while (1) {
        m = read(sockfd,buffer,255);
-       n = write(newsockfd,"Enter Number 1 : ",strlen("Enter Number 1"));         //Ask for Number 1     
+       n = write(sockfd,strlen("Server: Hi!"));         //Ask for Number 1     
       }
     
-     close(newsockfd);
+     
      close(sockfd);
      return 0; 
 }

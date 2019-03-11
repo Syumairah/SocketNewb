@@ -20,7 +20,6 @@ int main(int argc, char *argv[])
      char *hello = "Hello "; 
      int sockfd, newsockfd, portno;
      socklen_t clilen;
-     char buffer[1024];
      struct sockaddr_in serv_addr, cli_addr;
      int n;
      int m;
@@ -41,7 +40,6 @@ int main(int argc, char *argv[])
               error("ERROR on binding");
      listen(sockfd,5);
      clilen = sizeof(cli_addr);
-     st
        
       while (1) {
        m = read(sockfd,buffer,255);

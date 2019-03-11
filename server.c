@@ -1,18 +1,27 @@
-#include <unistd.h> 
-#include <stdio.h> 
-#include <sys/socket.h> 
-#include <stdlib.h> 
-#include <netinet/in.h> 
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
- 
+#include <unistd.h>
+#include <sys/types.h> 
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+
+
+void error(const char *msg)
+{
+    perror(msg);
+    exit(1);
+}
+
 int main(int argc, char *argv[])
 {
      int sockfd, newsockfd, portno;
      socklen_t clilen;
-     char buffer[255];
+     char buffer[1024];
      struct sockaddr_in serv_addr, cli_addr;
      int n;
+     int m;
      if (argc < 2) {
          fprintf(stderr,"ERROR, no port provided\n");
          exit(1);
@@ -35,21 +44,21 @@ int main(int argc, char *argv[])
                  &clilen);
      if (newsockfd < 0) 
           error("ERROR on accept");
-    while(1)
-     {
-           bzero(buffer,255);
-           n = read(newsockfd,buffer,255);
-           if (n < 0) error("ERROR reading from socket");
-           printf("Client: %s\n",buffer);
-          bzero(buffer,255);
-          fgets(buffer,255,stdin);
-          n = write(newsockfd,"Message:",strlen("hello from server"));
-           if (n < 0) error("ERROR writing to socket");
-           int i=strncmp("Bye" , buffer, 3);
-           if(i == 0)
-               break;
-     }
+       
+      while (1) {
+       m = read(sockfd,buffer,255);
+       n = write(newsockfd,"Enter Number 1 : ",strlen("Enter Number 1"));         //Ask for Number 1     
+      }
+    
      close(newsockfd);
      close(sockfd);
      return 0; 
-} 
+}
+
+
+
+/*
+Server side terminal:
+jj@ubuntu:~/Desktop$ gcc Server.c -o Server
+jj@ubuntu:~/Desktop$ ./Server 4562
+

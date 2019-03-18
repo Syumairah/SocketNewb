@@ -1,42 +1,32 @@
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.io.*;
+import java.net.*;
+public class GossipClient
+{
+  public static void main(String[] args) throws Exception
+  {
+     Socket sock = new Socket("192.168.242.128", 6789);
+                               // reading from keyboard (keyRead object)
+     BufferedReader keyRead = new BufferedReader(new InputStreamReader(System.in));
+                              // sending to client (pwrite object)
+     OutputStream ostream = sock.getOutputStream(); 
+     PrintWriter pwrite = new PrintWriter(ostream, true);
 
-/**
- * This class implements java socket client
- * @author pankaj
- *
- */
-public class SocketClientExample {
+                              // receiving from server ( receiveRead  object)
+     InputStream istream = sock.getInputStream();
+     BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));
 
-    public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException, InterruptedException{
-        //get the localhost IP address, if server is running on some other IP, you need to use that
-        String hostName = args[0];
-        int portNumber = Integer.parseInt(args[1]);
-        Socket socket = null;
-        ObjectOutputStream oos = null;
-        ObjectInputStream ois = null;
-        for(int i=0; i<5;i++){
-            //establish socket connection to server
-            socket = new Socket(hostName, portNumber);
-            //write to socket using ObjectOutputStream
-            oos = new ObjectOutputStream(socket.getOutputStream());
-            System.out.println("Sending request to Socket Server");
-	    oos.writeObject("Client: Hi ");
-            if(i==4)oos.writeObject("exit");
-            else oos.writeObject(""+i);
-            //read the server response message
-            ois = new ObjectInputStream(socket.getInputStream());
-            String message = (String) ois.readObject();
-	    
-            System.out.println("Server: " + message);
-            //close resources
-            ois.close();
-            oos.close();
-            Thread.sleep(100);
-        }
-    }
-}
+     System.out.println("Start the chitchat, type and press Enter key");
+
+     String receiveMessage, sendMessage;               
+     while(true)
+     {
+        sendMessage = keyRead.readLine();  // keyboard reading
+        pwrite.println(sendMessage);       // sending to server
+        pwrite.flush();                    // flush the data
+        if((receiveMessage = receiveRead.readLine()) != null) //receive from server
+        {
+            System.out.println(receiveMessage); // displaying at DOS prompt
+        }         
+      }               
+    }                    
+}                        

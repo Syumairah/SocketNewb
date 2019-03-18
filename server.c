@@ -6,8 +6,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-
-
 void error(const char *msg)
 {
     perror(msg);
@@ -16,13 +14,11 @@ void error(const char *msg)
 
 int main(int argc, char *argv[])
 {
-     char buffer[1024] = {0};
-     char *hello = "Hello "; 
      int sockfd, newsockfd, portno;
      socklen_t clilen;
+     char buffer[255];
      struct sockaddr_in serv_addr, cli_addr;
      int n;
-     int m;
      if (argc < 2) {
          fprintf(stderr,"ERROR, no port provided\n");
          exit(1);
@@ -40,18 +36,27 @@ int main(int argc, char *argv[])
               error("ERROR on binding");
      listen(sockfd,5);
      clilen = sizeof(cli_addr);
-       
-      while (1) {
-       m = read(sockfd,buffer,255);
-       n = write(sockfd,hello,strlen(hello),0);         //Ask for Number 1     
-      }
-    
-     
+     newsockfd = accept(sockfd, 
+                 (struct sockaddr *) &cli_addr, 
+                 &clilen);
+     if (newsockfd < 0) 
+          error("ERROR on accept");
+     while(1)
+     {
+           bzero(buffer,256);
+           n = read(newsockfd,buffer,255);
+           if (n < 0) error("ERROR reading from socket");
+           printf("Client: %s\n",buffer);
+          bzero(buffer,256);
+          fgets(buffer,255,stdin);
+          n = write(newsockfd,buffer,strlen(buffer));
+           if (n < 0) error("ERROR writing to socket");
+           int i=strncmp("Bye" , buffer, 3);
+           if(i == 0)
+               break;
+     }
+     close(newsockfd);
      close(sockfd);
      return 0; 
 }
-
-
-
-
 

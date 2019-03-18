@@ -24,9 +24,8 @@ class Client
         pwrite.println(sendMessage);       // sending to server
         pwrite.flush();                    // flush the data
         if((receiveMessage = receiveRead.readLine()) != null) //receive from server
-        {
-          System.out.println("Server:");  
-          System.out.println(receiveMessage); // displaying at DOS prompt
+        {  
+          System.out.println("Server: " + receiveMessage); // displaying at DOS prompt
         }         
       }               
     }                    

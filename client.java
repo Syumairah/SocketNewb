@@ -1,6 +1,6 @@
 import java.io.*;
 import java.net.*;
-public class GossipClient
+class Client
 {
   public static void main(String[] args) throws Exception
   {
@@ -25,7 +25,8 @@ public class GossipClient
         pwrite.flush();                    // flush the data
         if((receiveMessage = receiveRead.readLine()) != null) //receive from server
         {
-            System.out.println(receiveMessage); // displaying at DOS prompt
+          System.out.println("Server:");  
+          System.out.println(receiveMessage); // displaying at DOS prompt
         }         
       }               
     }                    

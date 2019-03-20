@@ -15,7 +15,7 @@ class Client
      InputStream istream = sock.getInputStream();
      BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));
 
-     System.out.println("Start the chitty chat xD");
+     System.out.println("You are connected to Server. Say hello!");
 
      String receiveMessage, sendMessage;               
      while(true)
